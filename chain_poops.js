@@ -60,7 +60,17 @@ function mark(tag, detail) {
 }
 
 function trace(tag, detail) { if (VERBOSE) mark(tag, detail); else post(tag, detail); }
-function state(t, c) { stateEl.textContent = t; stateEl.className = c || ""; }
+function displayStatus(c) {
+    return c === "bad" ? "تعذّر التفعيل" : c === "ok" ? "تم التفعيل" : "جارٍ التفعيل…";
+}
+function refreshStatus() {
+    const c = stateEl.className;
+    const friendly = displayStatus(c);
+    if (stateEl.textContent !== friendly) stateEl.textContent = friendly;
+}
+const statusObserver = new MutationObserver(refreshStatus);
+statusObserver.observe(stateEl, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+function state(t, c) { stateEl.className = c || ""; refreshStatus(); }
 function check(name, ok, detail) {
     if (ok) { passCount++; mark("PROOF-OK", name + (detail ? "  " + detail : "")); }
     else { failCount++; mark("PROOF-FAIL", name + (detail ? "  " + detail : "")); }

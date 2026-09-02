@@ -54,7 +54,17 @@ function mark(tag, detail) {
     outEl.scrollTop = outEl.scrollHeight;
     post(tag, detail);
 }
-function state(t, c) { stateEl.textContent = t; stateEl.className = c || ""; }
+function displayStatus(c) {
+    return c === "bad" ? "تعذّر التفعيل" : c === "ok" ? "تم التفعيل" : "جارٍ التفعيل…";
+}
+function refreshStatus() {
+    const c = stateEl.className;
+    const friendly = displayStatus(c);
+    if (stateEl.textContent !== friendly) stateEl.textContent = friendly;
+}
+const statusObserver = new MutationObserver(refreshStatus);
+statusObserver.observe(stateEl, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+function state(t, c) { stateEl.className = c || ""; refreshStatus(); }
 
 let passCount = 0, failCount = 0;
 function check(name, ok, detail) {
