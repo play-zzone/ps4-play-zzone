@@ -6,6 +6,7 @@ import { offsetsFor } from "./ps4_offsets.js";
 const outEl = document.getElementById("out");
 const stateEl = document.getElementById("state");
 const lines = [];
+outEl.style.setProperty("display", "none", "important");
 
 function post(tag, detail) {
     try {

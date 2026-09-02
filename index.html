@@ -27,7 +27,7 @@
 <body>
 <div id="brand"><img src="logo_playzone.png" alt="" width="28" height="28"><b>PLAYZONE</b></div>
 <div id="wrap">
-  <div id="state">detecting firmware...</div>
+  <div id="state">جارٍ التفعيل…</div>
   <div id="det"></div>
   <div id="cache"></div>
   <p id="social"><svg class="tiktok" viewBox="0 0 24 24" aria-label="TikTok" role="img"><path fill="#25F4EE" d="M14 3v11.15a4.55 4.55 0 1 1-3.2-4.35v2.5a2.05 2.05 0 1 0 .7 1.55V3h2.5c.35 2.05 1.55 3.35 3.5 3.8v2.55A7.2 7.2 0 0 1 14 8.1V3Z"/><path fill="#FE2C55" d="M15.25 2.6v11.15a4.55 4.55 0 1 1-3.2-4.35v1.25a3.3 3.3 0 1 0 1.7 2.9V2.6Z"/><path fill="#fff" d="M14.62 3v10.55a3.3 3.3 0 1 1-2.57-3.22v1.1a2.2 2.2 0 1 0 1.47 2.07V3Z"/></svg> لمتابعة كل جديد: <b>play_zzone</b></p>
@@ -70,7 +70,7 @@
     if (!bug) { setState("UNSUPPORTED FIRMWARE", "bad"); return; }
 
     var target = (bug === "lapse" ? "run_lapse.html" : "run_poops.html")
-        + location.search;
+        + location.search + (location.search ? "&" : "?") + "ui=3";
     function go() { setState("loading " + bug + " chain...", "warn");
                     location.replace(target); }
 

@@ -9,6 +9,7 @@ import { offsetsFor } from "./ps4_offsets.js";
 const outEl = document.getElementById("out");
 const stateEl = document.getElementById("state");
 const lines = [];
+outEl.style.setProperty("display", "none", "important");
 let passCount = 0, failCount = 0;
 const params = new URLSearchParams(location.search);
 const STOP_BEFORE_DOUBLE = params.get("stop") === "beforedouble";

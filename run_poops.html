@@ -17,14 +17,14 @@
   .ok { color:#65e8b8; } .bad { color:#ff8398; } .warn { color:#ffd16e; }
   #wrap { max-width:480px; margin:72px auto; text-align:center; }
   #state { margin:0; font-size:25px; }
-  #det, #cache, #out { display:none; }</style>
+  #det, #cache, #out { display:none !important; visibility:hidden !important; }</style>
 </head>
 <body>
 <div id="brand"><img src="logo_playzone.png" alt="" width="28" height="28"><b>PLAYZONE</b></div>
 <div id="wrap">
-  <div id="state">loading poops chain...</div>
+  <div id="state">جارٍ التفعيل…</div>
   <div id="out"></div>
 </div>
-<script type="module">import "./chain_poops.js";</script>
+<script type="module">import "./chain_poops.js?ui=3";</script>
 </body>
 </html>
