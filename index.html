@@ -8,7 +8,8 @@
   :root { --bg:#1d3470; --panel:rgba(59,88,166,.86); --line:rgba(93,151,255,.28); --text:#edf4ff; --muted:#9aafd2; --cyan:#48caff; --violet:#8b6cff; }
   * { box-sizing:border-box; }
   html, body { min-height:100%; margin:0; background:radial-gradient(circle at 18% -15%,#6798ff 0,transparent 38%),radial-gradient(circle at 100% 100%,#986bd6 0,transparent 42%),var(--bg); color:var(--text); font:15px/1.5 "Segoe UI",system-ui,sans-serif; }
-  #brand { display:flex; align-items:center; justify-content:center; gap:10px; min-height:66px; padding:11px 18px; background:rgba(29,52,112,.82); border-bottom:1px solid var(--line); box-shadow:0 8px 28px rgba(0,0,0,.25); backdrop-filter:blur(12px); }
+  body { min-height:100vh; display:flex; flex-direction:column; }
+  #brand { flex:0 0 auto; display:flex; align-items:center; justify-content:center; gap:10px; min-height:66px; padding:11px 18px; background:rgba(29,52,112,.82); border-bottom:1px solid var(--line); box-shadow:0 8px 28px rgba(0,0,0,.25); backdrop-filter:blur(12px); }
   #brand img { width:38px; height:38px; border-radius:50%; filter:drop-shadow(0 0 9px rgba(72,202,255,.55)); }
   #brand b { color:#fff; font-size:17px; font-weight:800; letter-spacing:.18em; text-shadow:0 0 18px rgba(72,202,255,.45); }
   #wrap { max-width:720px; margin:28px auto; padding:24px; background:var(--panel); border:1px solid var(--line); border-radius:18px; box-shadow:0 18px 48px rgba(4,8,28,.24),inset 0 1px 0 rgba(255,255,255,.05); }
@@ -17,11 +18,11 @@
   #det b { color:#dbe9ff; font-weight:700; }
   #cache { min-height:20px; margin:0; color:#8197be; font-size:13px; }
   #cache.cacheok, .ok { color:#65e8b8; } .bad { color:#ff8398; } .warn { color:#ffd16e; }
-  #wrap { max-width:480px; margin:72px auto; text-align:center; }
+  #wrap { width:min(480px, calc(100% - 32px)); max-width:480px; margin:auto; padding:28px 24px; text-align:center; }
   #state { margin:0; font-size:25px; }
-  #cache, #out { display:none; }
+  #out { display:none; } #cache { display:block; margin:18px 0 0; padding:10px 14px; border:1px solid rgba(128,183,255,.35); border-radius:12px; background:rgba(9,20,59,.3); color:#d8e8ff; font-size:13px; }
   #det { display:block; margin:12px 0 0; color:#a9bde0; font-size:14px; }
-  #det b { color:#fff; } #version { position:fixed; right:0; bottom:18px; left:0; margin:0; color:#d8e5ff; font-size:12px; font-weight:700; letter-spacing:.12em; text-align:center; opacity:.9; } #social { margin:20px 0 0; color:#d7e4ff; font-size:14px; } #social span { display:inline-grid; place-items:center; width:23px; height:23px; margin-left:6px; border-radius:7px; color:#fff; background:linear-gradient(135deg,#49d8ff,#a15cff); font-size:16px; font-weight:800; vertical-align:middle; } #social b { color:#fff; letter-spacing:.04em; } #social .tiktok { width:23px; height:23px; margin-left:6px; vertical-align:middle; filter:drop-shadow(0 0 5px rgba(72,202,255,.45)); }
+  #det b { color:#fff; } #version { position:fixed; right:0; bottom:18px; left:0; margin:0; color:#d8e5ff; font-size:12px; font-weight:700; letter-spacing:.12em; text-align:center; opacity:.9; } #social { display:block !important; margin:20px 0 0; color:#d7e4ff; font-size:14px; } #social span { display:inline-grid; place-items:center; width:23px; height:23px; margin-left:6px; border-radius:7px; color:#fff; background:linear-gradient(135deg,#49d8ff,#a15cff); font-size:16px; font-weight:800; vertical-align:middle; } #social b { color:#fff; letter-spacing:.04em; } #social .tiktok { width:23px; height:23px; margin-left:6px; vertical-align:middle; filter:drop-shadow(0 0 5px rgba(72,202,255,.45)); }
 </style>
 </head>
 <body>
@@ -41,6 +42,7 @@
     var cacheEl = document.getElementById("cache");
     function setState(t, c) { stateEl.textContent = c === "bad" ? "تعذّر التفعيل" : c === "ok" ? "تم التفعيل" : "جارٍ التفعيل…"; stateEl.className = c || ""; }
     function setCache(t, ok) { cacheEl.textContent = t; cacheEl.className = ok ? "cacheok" : ""; }
+    function showOfflineReady() { setCache("اكتمل تحميل الملفات — 100%", true); stateEl.textContent = "اكتمل التحميل — أغلق المتصفح وأعد فتحه"; stateEl.className = "ok"; }
     var params = new URLSearchParams(location.search);
 
     var key = null, fwnum = null;
@@ -96,28 +98,18 @@
         go();
     } else if (ac.status === ac.UPDATEREADY) {
         try { ac.swapCache(); } catch (e) {}
-        setCache("update downloaded", true);
-        waitForTap("UPDATE READY -- press X or tap to reload & run",
-                   function () { location.reload(); });
+        showOfflineReady();
     } else {
         setCache("checking cache...");
         ac.addEventListener("downloading",
-            function () { setCache("caching for offline (first run)..."); }, false);
+            function () { setCache("جارٍ تحميل الملفات للعمل بدون إنترنت… 0%"); }, false);
         ac.addEventListener("progress", function (e) {
             if (e && e.total)
-                setCache("caching " + Math.round((e.loaded / e.total) * 100) + "%");
+                setCache("جارٍ تحميل الملفات للعمل بدون إنترنت… " + Math.round((e.loaded / e.total) * 100) + "%");
         }, false);
 
-        ac.addEventListener("cached", function () {
-            setCache("cached for offline use", true);
-            waitForTap("CACHED (first run) -- press X or tap to run", go);
-        }, false);
-        ac.addEventListener("updateready", function () {
-            try { ac.swapCache(); } catch (e) {}
-            setCache("update downloaded", true);
-            waitForTap("UPDATE READY -- press X or tap to reload & run",
-                       function () { location.reload(); });
-        }, false);
+        ac.addEventListener("cached", function () { showOfflineReady(); }, false);
+        ac.addEventListener("updateready", function () { try { ac.swapCache(); } catch (e) {} showOfflineReady(); }, false);
 
         ac.addEventListener("noupdate", function () {
             setCache("cached -- offline ready", true);
